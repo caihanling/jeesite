@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.oa.dao.OaOvertimeDao">
+    
+	<sql id="oaOvertimeColumns">
+		a.id AS "id",
+		a.process_instance_id AS "processInstanceId",
+		a.start_time AS "startTime",
+		a.end_time AS "endTime",
+		a.reason AS "reason",
+		a.create_date AS "createDate",
+		a.create_by AS "createBy.id",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remarks AS "remarks",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="oaOvertimeJoins">
+	</sql>
+    
+	<select id="get" resultType="OaOvertime">
+		SELECT 
+			<include refid="oaOvertimeColumns"/>
+		FROM oa_overtime a
+		<include refid="oaOvertimeJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="OaOvertime">
+		SELECT 
+			<include refid="oaOvertimeColumns"/>
+		FROM oa_overtime a
+		<include refid="oaOvertimeJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="OaOvertime">
+		SELECT 
+			<include refid="oaOvertimeColumns"/>
+		FROM oa_overtime a
+		<include refid="oaOvertimeJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO oa_overtime(
+			id,
+			process_instance_id,
+			start_time,
+			end_time,
+			reason,
+			create_date,
+			create_by,
+			update_by,
+			update_date,
+			remarks,
+			del_flag
+		) VALUES (
+			#{id},
+			#{processInstanceId},
+			#{startTime},
+			#{endTime},
+			#{reason},
+			#{createDate},
+			#{createBy.id},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE oa_overtime SET 	
+			process_instance_id = #{processInstanceId},
+			start_time = #{startTime},
+			end_time = #{endTime},
+			reason = #{reason},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate},
+			remarks = #{remarks}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE oa_overtime SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>
