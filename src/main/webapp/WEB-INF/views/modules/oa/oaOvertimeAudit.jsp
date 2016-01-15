@@ -27,13 +27,14 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li><a href="${ctx}/oa/testAudit/">审批列表</a></li>
-		<li class="active"><a href="#"><shiro:hasPermission name="oa:testAudit:edit">${testAudit.act.taskName}</shiro:hasPermission><shiro:lacksPermission name="oa:testAudit:edit">查看</shiro:lacksPermission></a></li>
+		<li><a href="${ctx}/oa/oaOvertime/">审批列表</a></li>
+		<li class="active"><a href="#"><shiro:hasPermission name="oa:oaOvertime:edit">${testAudit.act.taskName}</shiro:hasPermission><shiro:lacksPermission name="oa:oaOvertime:edit">查看</shiro:lacksPermission></a></li>
 	</ul>
-	<form:form id="inputForm" modelAttribute="testAudit" action="${ctx}/oa/testAudit/saveAudit" method="post" class="form-horizontal">
+	
+	<form:form id="inputForm" modelAttribute="oaOvertime" action="${ctx}/oa/oaOvertime/saveAudit" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
 		<form:hidden path="act.taskId"/>
-		<form:hidden path="act.taskName"/>
+<%-- 		<form:hidden path="act.taskName"/> --%>
 		<form:hidden path="act.taskDefKey"/>
 		<form:hidden path="act.procInsId"/>
 		<form:hidden path="act.procDefId"/>
@@ -44,28 +45,30 @@
 			<table class="table-form">
 				<tr>
 					<td class="tit">姓名</td><td>${oaOvertime.createBy.id}</td>
-					<td class="tit">加班开始时间</td><td>${oaOvertime.startTime}</td>
-					<td class="tit">加班结束时间职级</td><td>${oaOvertime.endTime}</td>
+					<td class="tit">id</td><td>${oaOvertime.act.taskId}</td>
+					<td class="tit">开始加班时间</td><td>${oaOvertime.startTime}</td>
+					<td class="tit">加班结束时间</td><td>${oaOvertime.endTime}</td>
 				</tr>
 				<tr>
 					<td class="tit">调整原因</td>
 					<td colspan="5">${oaOvertime.reason}</td>
 				</tr>
 				<tr>
-					<td class="tit" rowspan="3">备注信息</td>
-					<td class="tit">备注信息档级</td>
+					<td class="tit" rowspan="3">备注</td>
+					<td class="tit">备注</td>
 					<td>${oaOvertime.remarks}</td>
 				</tr>
 			
 			
+			
 				<tr>
-					<td class="tit">借用remarks字段代表意见</td>
+					<td class="tit">leader部意见</td>
 					<td colspan="5">
 						${testAudit.remarks}
 					</td>
 				</tr>
 				
-			
+				
 				<tr>
 					<td class="tit">您的意见</td>
 					<td colspan="5">
@@ -74,12 +77,13 @@
 				</tr>
 			</table>
 		</fieldset>
+		<c:out value="${oaOvertime.act.taskId }"></c:out>
 		<div class="form-actions">
-			<shiro:hasPermission name="oa:testAudit:edit">
-				<c:if test="${testAudit.act.taskDefKey eq 'apply_end'}">
+			<shiro:hasPermission name="oa:oaOvertime:edit">
+				<c:if test="${oaOvertime.act.taskDefKey eq 'apply_end'}">
 					<input id="btnSubmit" class="btn btn-primary" type="submit" value="兑 现" onclick="$('#flag').val('yes')"/>&nbsp;
 				</c:if>
-				<c:if test="${testAudit.act.taskDefKey ne 'apply_end'}">
+				<c:if test="${oaOvertime.act.taskDefKey ne 'apply_end'}">
 					<input id="btnSubmit" class="btn btn-primary" type="submit" value="同 意" onclick="$('#flag').val('yes')"/>&nbsp;
 					<input id="btnSubmit" class="btn btn-inverse" type="submit" value="驳 回" onclick="$('#flag').val('no')"/>&nbsp;
 				</c:if>

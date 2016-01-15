@@ -65,10 +65,31 @@ public class OaOvertimeController extends BaseController {
 		
 			//环节编号
 			String taskDefKey = oaOvertime.getAct().getTaskDefKey();
+			System.err.println(taskDefKey);
+			
+			//查看工单
+			if (oaOvertime.getAct().isFinishTask()) {
+				view = "oaOvertimeView";
+			}
+			
+			//审核环节1
+			else if ("leaderAudit".equals(taskDefKey)) {
+				view = "oaOvertimeAudit";
+			}
+			
+			//审核环节2
+			else if ("confirme".equals(taskDefKey)) {
+				view = "oaOvertimeAudit";
+			}
+			
+			//兑现环节
+			else if ("apply_end".equals(taskDefKey)) {
+				view = "oaOvertimeAudit";
+			}
 		}
 		
 		model.addAttribute("oaOvertime", oaOvertime);
-		return "modules/oa/oaOvertimeForm";
+		return "modules/oa/" + view;
 	}
 
 	
@@ -97,6 +118,20 @@ public class OaOvertimeController extends BaseController {
 		oaOvertimeService.delete(oaOvertime);
 		addMessage(redirectAttributes, "删除加班申请成功");
 		return "redirect:"+Global.getAdminPath()+"/oa/oaOvertime/?repage";
+	}
+	
+	/**
+	 * 工单执行
+	 */
+	@RequiresPermissions("oa:oaOvertime:edit")
+	@RequestMapping(value="saveAudit")
+	public String saveAudit(OaOvertime oaOvertime , Model model) {
+		if (StringUtils.isBlank(oaOvertime.getAct().getFlag()) || StringUtils.isBlank(oaOvertime.getAct().getComment()) ) {
+			addMessage(model, "请填写审核意见。");
+			return form(oaOvertime , model);
+		}
+		oaOvertimeService.saveAudit(oaOvertime);
+		return "redirect:" + adminPath + "/act/task/todo/";
 	}
 
 }

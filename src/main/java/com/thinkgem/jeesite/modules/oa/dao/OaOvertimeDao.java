@@ -15,4 +15,6 @@ import com.thinkgem.jeesite.modules.oa.entity.OaOvertime;
 @MyBatisDao
 public interface OaOvertimeDao extends CrudDao<OaOvertime> {
 	
+	public int updateRemakrs(OaOvertime oaOvertime);
+	
 }

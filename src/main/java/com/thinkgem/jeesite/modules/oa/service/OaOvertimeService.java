@@ -47,7 +47,7 @@ public class OaOvertimeService extends CrudService<OaOvertimeDao, OaOvertime> {
 			dao.insert(oaOvertime);
 			
 			//启动流程
-			actTaskService.startProcess(ActUtils.PD_TEST_AUDIT[0], ActUtils.PD_TEST_AUDIT[1], oaOvertime.getId(), oaOvertime.getReason());
+			actTaskService.startProcess(ActUtils.PD_OVERTIME[0], ActUtils.PD_OVERTIME[1], oaOvertime.getId(), oaOvertime.getReason());
 			
 		}
 		//重新编辑申请
@@ -68,6 +68,46 @@ public class OaOvertimeService extends CrudService<OaOvertimeDao, OaOvertime> {
 	@Transactional(readOnly = false)
 	public void delete(OaOvertime oaOvertime) {
 		super.delete(oaOvertime);
+	}
+	
+	/**
+	 * 审核审批保存
+	 */
+	@Transactional(readOnly = false)
+	public void saveAudit(OaOvertime oaOvertime) {
+		
+		//设置意见
+		oaOvertime.getAct().setComment(("yes".equals(oaOvertime.getAct().getFlag())?"[同意] ":"[驳回] ") + oaOvertime.getAct().getComment());
+		
+		oaOvertime.preUpdate();
+		
+		//对不同环节的业务逻辑进行操作
+		String taskDefKey = oaOvertime.getAct().getTaskDefKey();
+		
+		//审核环节
+		if("leaderAudit".equals(taskDefKey)) {
+			oaOvertime.setRemarks(oaOvertime.getAct().getComment());
+			System.err.println(oaOvertime.getRemarks());
+			dao.updateRemakrs(oaOvertime);
+			
+		}else if("confirme".equals(taskDefKey)) {
+			oaOvertime.setRemarks(oaOvertime.getAct().getComment());
+			System.err.println(oaOvertime.getRemarks());
+			dao.updateRemakrs(oaOvertime);
+			
+		}else if("apply_end".equals(taskDefKey)) {
+			
+		}
+		//未知环节
+		else{
+			return;
+		}
+		
+		
+		//提交任务流程
+		Map<String, Object> vars = Maps.newHashMap();
+		vars.put("pass", "yes".equals(oaOvertime.getAct().getFlag()) ? "1" :"0");
+		actTaskService.complete(oaOvertime.getAct().getTaskId(), oaOvertime.getAct().getProcInsId(), oaOvertime.getAct().getProcInsId(), vars);
 	}
 	
 }

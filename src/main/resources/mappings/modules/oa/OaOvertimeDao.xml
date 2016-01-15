@@ -4,7 +4,7 @@
     
 	<sql id="oaOvertimeColumns">
 		a.id AS "id",
-		a.process_instance_id AS "processInstanceId",
+		a.proc_ins_id AS "processInstanceId",
 		a.start_time AS "startTime",
 		a.end_time AS "endTime",
 		a.reason AS "reason",
@@ -66,7 +66,7 @@
 	<insert id="insert">
 		INSERT INTO oa_overtime(
 			id,
-			process_instance_id,
+			proc_ins_id,
 			start_time,
 			end_time,
 			reason,
@@ -93,7 +93,7 @@
 	
 	<update id="update">
 		UPDATE oa_overtime SET 	
-			process_instance_id = #{processInstanceId},
+			proc_ins_id = #{processInstanceId},
 			start_time = #{startTime},
 			end_time = #{endTime},
 			reason = #{reason},
@@ -107,6 +107,12 @@
 		UPDATE oa_overtime SET 
 			del_flag = #{DEL_FLAG_DELETE}
 		WHERE id = #{id}
+	</update>
+	
+	<update id="updateRemakrs">
+	UPDATE oa_overtime SET
+		remarks = #{remarks}
+	WHERE id = #{id}
 	</update>
 	
 </mapper>
