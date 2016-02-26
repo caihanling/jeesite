@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.oa.dao.OaPunchDao">
+    
+	<sql id="oaPunchColumns">
+		a.id AS "id",
+		a.proc_ins_id AS "procInsId",
+		a.user_id AS "user.id",
+		a.office_id AS "office.id",
+		a.post AS "post",
+		a.reason AS "reason",
+		a.punch_time AS "punchTime",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.audit1_text AS "audit1Text",
+		a.audit2_text AS "audit2Text",
+		a.audit3_text AS "audit3Text",
+		a.audit4_text AS "audit4Text",
+		a.audit5_text AS "audit5Text",
+		a.audit6_text AS "audit6Text",
+		a.status AS "status",
+		a.backup2 AS "backup2",
+		a.backup3 AS "backup3",
+		a.remarks AS "remarks",
+		a.del_flag AS "delFlag",
+		u3.name AS "user.name",
+		o4.name AS "office.name"
+	</sql>
+	
+	<sql id="oaPunchJoins">
+		LEFT JOIN sys_user u3 ON u3.id = a.user_id
+		LEFT JOIN sys_office o4 ON o4.id = a.office_id
+	</sql>
+    
+	<select id="get" resultType="OaPunch">
+		SELECT 
+			<include refid="oaPunchColumns"/>
+		FROM oa_punch a
+		<include refid="oaPunchJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="OaPunch">
+		SELECT 
+			<include refid="oaPunchColumns"/>
+		FROM oa_punch a
+		<include refid="oaPunchJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL} AND a.user_id = #{user.id}
+		</where>
+		
+		<if test="user != null and user.id != null and user.id != ''">
+			AND u3.id LIKE 
+					<if test="dbName == 'oracle'">'%'||#{user.id}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{user.id}+'%'</if>
+					<if test="dbName == 'mysql'">CONCAT('%', #{user.id}, '%')</if>
+		</if>
+		
+		<if test="backup2 != null and backup3 != null">
+			<![CDATA[ AND a.punch_time > #{backup2} AND a.punch_time < #{backup3} ]]>
+		</if>
+		
+		<if test="backup2 != null and backup3 == null">
+			<![CDATA[ AND a.punch_time > #{backup2} ]]>
+		</if>
+		
+		<if test="backup2 == null and backup3 != null">
+			<![CDATA[ AND a.punch_time < #{backup3} ]]>
+		</if>
+		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findListByHr" resultType="OaPunch">
+		SELECT
+		<include refid="oaPunchColumns" />
+		FROM oa_punch a
+		<include refid="oaPunchJoins" />
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL} AND a.status = 1
+		</where>
+		
+		<if test="user != null and user.id != null and user.id != ''">
+			AND u3.id LIKE 
+					<if test="dbName == 'oracle'">'%'||#{user.id}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{user.id}+'%'</if>
+					<if test="dbName == 'mysql'">CONCAT('%', #{user.id}, '%')</if>
+		</if>
+		
+		
+		<if test="backup2 != null and backup3 != null">
+			<![CDATA[ AND a.punch_time > #{backup2} AND a.punch_time < #{backup3} ]]>
+		</if>
+		
+		<if test="backup2 != null and backup3 == null">
+			<![CDATA[ AND a.punch_time > #{backup2} ]]>
+		</if>
+		
+		<if test="backup2 == null and backup3 != null">
+			<![CDATA[ AND a.punch_time < #{backup3} ]]>
+		</if>
+		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="OaPunch">
+		SELECT 
+			<include refid="oaPunchColumns"/>
+		FROM oa_punch a
+		<include refid="oaPunchJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO oa_punch(
+			id,
+			proc_ins_id,
+			user_id,
+			office_id,
+			post,
+			reason,
+			punch_time,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			audit1_text,
+			audit2_text,
+			audit3_text,
+			audit4_text,
+			audit5_text,
+			audit6_text,
+			status,
+			backup2,
+			backup3,
+			remarks,
+			del_flag
+		) VALUES (
+			#{id},
+			#{procInsId},
+			#{user.id},
+			#{office.id},
+			#{post},
+			#{reason},
+			#{punchTime},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{audit1Text},
+			#{audit2Text},
+			#{audit3Text},
+			#{audit4Text},
+			#{audit5Text},
+			#{audit6Text},
+			#{status},
+			#{backup2},
+			#{backup3},
+			#{remarks},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE oa_punch SET 	
+			proc_ins_id = #{procInsId},
+			user_id = #{user.id},
+			office_id = #{office.id},
+			post = #{post},
+			reason = #{reason},
+			punch_time = #{punchTime},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate},
+			audit1_text = #{audit1Text},
+			audit2_text = #{audit2Text},
+			audit3_text = #{audit3Text},
+			audit4_text = #{audit4Text},
+			audit5_text = #{audit5Text},
+			audit6_text = #{audit6Text},
+			status = #{status},
+			backup2 = #{backup2},
+			backup3 = #{backup3},
+			remarks = #{remarks}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE oa_punch SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="updateAudit1Text">
+		UPDATE oa_punch SET
+		 	audit1_text = #{audit1Text},
+		 	update_by = #{updateBy.id},
+			update_date = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="updateAudit2Text">
+		UPDATE oa_punch SET
+		 	audit2_text = #{audit2Text},
+		 	update_by = #{updateBy.id},
+			update_date = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="updateStatus">
+		UPDATE oa_punch SET
+		status = #{status}
+		WHERE id = #{id}
+	</update>
+	
+	<select id="getTotalByTime" resultType="String">
+		SELECT count(*)
+		FROM oa_punch a
+		<include refid="oaPunchJoins" />
+		
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}  AND a.status = 1
+		</where>
+		
+		<if test="user != null and user.id != null and user.id != ''">
+			AND u3.id LIKE 
+					<if test="dbName == 'oracle'">'%'||#{user.id}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{user.id}+'%'</if>
+					<if test="dbName == 'mysql'">CONCAT('%', #{user.id}, '%')</if>
+		</if>
+		
+		<if test="backup2 != null and backup3 != null">
+			<![CDATA[ AND a.punch_time > #{backup2} AND a.punch_time < #{backup3} ]]>
+		</if>
+		
+		<if test="backup2 != null and backup3 == null">
+			<![CDATA[ AND a.punch_time > #{backup2} ]]>
+		</if>
+		
+		<if test="backup2 == null and backup3 != null">
+			<![CDATA[ AND a.punch_time < #{backup3} ]]>
+		</if>
+		
+	</select>
+	
+</mapper>

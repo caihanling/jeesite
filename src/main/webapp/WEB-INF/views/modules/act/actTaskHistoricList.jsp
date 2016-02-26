@@ -17,7 +17,7 @@
 	<ul class="nav nav-tabs">
 		<li><a href="${ctx}/act/task/todo/">待办任务</a></li>
 		<li class="active"><a href="${ctx}/act/task/historic/">已办任务</a></li>
-		<li><a href="${ctx}/act/task/process/">新建任务</a></li>
+<%-- 		<li><a href="${ctx}/act/task/process/">新建任务</a></li> --%>
 	</ul>
 	<form:form id="searchForm" modelAttribute="act" action="${ctx}/act/task/historic/" method="get" class="breadcrumb form-search">
 		<div>
@@ -46,9 +46,9 @@
 				<th>当前环节</th><%--
 				<th>任务内容</th> --%>
 				<th>流程名称</th>
-				<th>流程版本</th>
+<!-- 				<th>流程版本</th> -->
 				<th>完成时间</th>
-				<th>操作</th>
+<!-- 				<th>操作</th> -->
 			</tr>
 		</thead>
 		<tbody>
@@ -60,7 +60,8 @@
 				<c:set var="status" value="${act.status}" />
 				<tr>
 					<td>
-						<a href="${ctx}/act/task/form?taskId=${task.id}&taskName=${fns:urlEncode(task.name)}&taskDefKey=${task.taskDefinitionKey}&procInsId=${task.processInstanceId}&procDefId=${task.processDefinitionId}&status=${status}">${fns:abbr(not empty vars.map.title ? vars.map.title : task.id, 60)}</a>
+<%-- 						<a href="${ctx}/act/task/form?taskId=${task.id}&taskName=${fns:urlEncode(task.name)}&taskDefKey=${task.taskDefinitionKey}&procInsId=${task.processInstanceId}&procDefId=${task.processDefinitionId}&status=${status}">${fns:abbr(not empty vars.map.title ? vars.map.title : task.id, 60)}</a> --%>
+						${fns:abbr(not empty vars.map.title ? vars.map.title : task.id, 60)}
 					</td>
 					<td>
 						<a target="_blank" href="${pageContext.request.contextPath}/act/rest/diagram-viewer?processDefinitionId=${task.processDefinitionId}&processInstanceId=${task.processInstanceId}">${task.name}</a><%--
@@ -69,11 +70,11 @@
 					</td><%--
 					<td>${task.description}</td> --%>
 					<td>${procDef.name}</td>
-					<td><b title='流程版本号'>V: ${procDef.version}</b></td>
-					<td><fmt:formatDate value="${task.endTime}" type="both"/></td>
-					<td>
-						<a href="${ctx}/act/task/form?taskId=${task.id}&taskName=${fns:urlEncode(task.name)}&taskDefKey=${task.taskDefinitionKey}&procInsId=${task.processInstanceId}&procDefId=${task.processDefinitionId}&status=${status}">详情</a>
-					</td>
+<%-- 					<td><b title='流程版本号'>V: ${procDef.version}</b></td> --%>
+					<td><fmt:formatDate value="${task.endTime}" type="both" pattern="yyyy-MM-dd HH:mm:ss"/></td>
+<!-- 					<td> -->
+<%-- 						<a href="${ctx}/act/task/form?taskId=${task.id}&taskName=${fns:urlEncode(task.name)}&taskDefKey=${task.taskDefinitionKey}&procInsId=${task.processInstanceId}&procDefId=${task.processDefinitionId}&status=${status}">详情</a> --%>
+<!-- 					</td> -->
 				</tr>
 			</c:forEach>
 		</tbody>

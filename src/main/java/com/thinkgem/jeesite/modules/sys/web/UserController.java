@@ -331,6 +331,24 @@ public class UserController extends BaseController {
 		return "modules/sys/userModifyPwd";
 	}
 	
+	
+/*	//TODO
+	*//**
+	 * 显示当前用户的当月工作详情
+	 * @param user
+	 * @param model
+	 * @return
+	 *//*
+	@RequiresPermissions("user")
+	@RequestMapping(value = "monthDetail")
+	public String monthDetail(User user , Model model) {
+		User userDetail = UserUtils.getUser();
+		if (StringUtils.isNotBlank(user.getName())){
+			//联合查询表格，将值赋给userDetail，然后addAttribute
+		}
+		return "";
+	}*/
+	
 	@RequiresPermissions("user")
 	@ResponseBody
 	@RequestMapping(value = "treeData")

@@ -62,7 +62,7 @@ public class TestAuditService extends CrudService<TestAuditDao, TestAudit> {
 			testAudit.preUpdate();
 			dao.update(testAudit);
 
-			testAudit.getAct().setComment(("yes".equals(testAudit.getAct().getFlag())?"[重申] ":"[销毁] ")+testAudit.getAct().getComment());
+			testAudit.getAct().setComment(("yes".equals(testAudit.getAct().getFlag())?"[重申] ":"[确认] ")+testAudit.getAct().getComment());
 			
 			// 完成流程任务
 			Map<String, Object> vars = Maps.newHashMap();

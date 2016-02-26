@@ -28,13 +28,12 @@
 <body>
 	<ul class="nav nav-tabs">
 		<li><a href="${ctx}/oa/oaOvertime/">审批列表</a></li>
-		<li class="active"><a href="#"><shiro:hasPermission name="oa:oaOvertime:edit">${testAudit.act.taskName}</shiro:hasPermission><shiro:lacksPermission name="oa:oaOvertime:edit">查看</shiro:lacksPermission></a></li>
+		<li class="active"><a href="#"><shiro:hasPermission name="oa:oaOvertime:edit">${oaOvertime.act.taskName}</shiro:hasPermission><shiro:lacksPermission name="oa:oaOvertime:edit">查看</shiro:lacksPermission></a></li>
 	</ul>
-	
-	<form:form id="inputForm" modelAttribute="oaOvertime" action="${ctx}/oa/oaOvertime/saveAudit" method="post" class="form-horizontal">
+		<form:form id="inputForm" modelAttribute="oaOvertime" action="${ctx}/oa/oaOvertime/saveAudit" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
 		<form:hidden path="act.taskId"/>
-<%-- 		<form:hidden path="act.taskName"/> --%>
+		<form:hidden path="act.taskName"/>
 		<form:hidden path="act.taskDefKey"/>
 		<form:hidden path="act.procInsId"/>
 		<form:hidden path="act.procDefId"/>
@@ -44,31 +43,32 @@
 			<legend>${oaOvertime.act.taskName}</legend>
 			<table class="table-form">
 				<tr>
-					<td class="tit">姓名</td><td>${oaOvertime.createBy.id}</td>
-					<td class="tit">id</td><td>${oaOvertime.act.taskId}</td>
-					<td class="tit">开始加班时间</td><td>${oaOvertime.startTime}</td>
-					<td class="tit">加班结束时间</td><td>${oaOvertime.endTime}</td>
+					<td class="tit">姓名</td><td>${oaOvertime.user.name}</td>
+					<td class="tit">部门</td><td>${oaOvertime.office.name}</td>
+					<td class="tit">岗位职级</td><td>${fns:getDictLabel(oaOvertime.post, 'user_post', '')}</td>
 				</tr>
+				
+				
 				<tr>
-					<td class="tit">调整原因</td>
-					<td colspan="5">${oaOvertime.reason}</td>
+					<td class="tit">加班原因</td><td>${oaOvertime.reason}</td>
+					<td class="tit">加班时间</td><td><fmt:formatDate value="${oaOvertime.beginTime}" pattern="yyyy-MM-dd HH:mm:ss"/>&nbsp;&nbsp;--&nbsp;&nbsp;
+						<fmt:formatDate value="${oaOvertime.endTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
+					<td class="tit">加班时长</td><td>${oaOvertime.count}</td>
 				</tr>
-				<tr>
-					<td class="tit" rowspan="3">备注</td>
-					<td class="tit">备注</td>
-					<td>${oaOvertime.remarks}</td>
-				</tr>
-			
-			
+
 			
 				<tr>
-					<td class="tit">leader部意见</td>
+					<td class="tit">组长意见意见</td>
 					<td colspan="5">
-						${testAudit.remarks}
+						${oaOvertime.audit1Text}
 					</td>
 				</tr>
-				
-				
+				<tr>
+					<td class="tit">部门经理意见</td>
+					<td colspan="5">
+						${oaOvertime.audit2Text}
+					</td>
+				</tr>
 				<tr>
 					<td class="tit">您的意见</td>
 					<td colspan="5">
@@ -77,7 +77,6 @@
 				</tr>
 			</table>
 		</fieldset>
-		<c:out value="${oaOvertime.act.taskId }"></c:out>
 		<div class="form-actions">
 			<shiro:hasPermission name="oa:oaOvertime:edit">
 				<c:if test="${oaOvertime.act.taskDefKey eq 'apply_end'}">

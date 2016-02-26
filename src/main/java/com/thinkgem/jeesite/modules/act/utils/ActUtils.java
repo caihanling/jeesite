@@ -38,9 +38,12 @@ public class ActUtils {
 	 * 定义流程定义KEY，必须以“PD_”开头
 	 * 组成结构：string[]{"流程标识","业务主表表名"}
 	 */
-	public static final String[] PD_LEAVE = new String[]{"leave", "oa_leave"};
 	public static final String[] PD_TEST_AUDIT = new String[]{"test_audit", "oa_test_audit"};
-	public static final String[] PD_OVERTIME = new String[]{"test_overtime","oa_overtime"};
+	public static final String[] PD_OVERTIME = new String[]{"overtime","oa_overtime"};
+	public static final String[] PD_LEAVE = new String[]{"leave" , "oa_leave"};
+	public static final String[] PD_PUNCH = new String[]{"punch" , "oa_punch"};
+	public static final String[] PD_EXPENSE = new String[]{"expense" , "oa_expense"};
+	
 	
 //	/**
 //	 * 流程定义Map（自动初始化）

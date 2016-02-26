@@ -73,12 +73,14 @@ public class DictUtils {
 					dictMap.put(dict.getType(), Lists.newArrayList(dict));
 				}
 			}
+			//写入SYS_CACHE缓存
 			CacheUtils.put(CACHE_DICT_MAP, dictMap);
 		}
 		List<Dict> dictList = dictMap.get(type);
 		if (dictList == null){
 			dictList = Lists.newArrayList();
 		}
+		
 		return dictList;
 	}
 	

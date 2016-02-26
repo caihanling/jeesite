@@ -6,10 +6,11 @@
 		<tr>
 			<td>${act.histIns.activityName}</td>
 			<td>${act.assigneeName}</td>
-			<td><fmt:formatDate value="${act.histIns.startTime}" type="both"/></td>
-			<td><fmt:formatDate value="${act.histIns.endTime}" type="both"/></td>
+			<td><fmt:formatDate value="${act.histIns.startTime}" type="both" pattern="yyyy-MM-dd HH:mm:ss"/></td>
+			<td><fmt:formatDate value="${act.histIns.endTime}" type="both" pattern="yyyy-MM-dd HH:mm:ss"/></td>
 			<td style="word-wrap:break-word;word-break:break-all;">${act.comment}</td>
 			<td>${act.durationTime}</td>
 		</tr>
 	</c:forEach>
 </table>
+

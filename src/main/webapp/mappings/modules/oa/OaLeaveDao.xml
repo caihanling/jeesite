@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.oa.dao.OaLeaveDao">
+    
+	<sql id="oaLeaveColumns">
+		a.id AS "id",
+		a.proc_ins_id AS "procInsId",
+		a.user_id AS "user.id",
+		a.office_id AS "office.id",
+		a.post AS "post",
+		a.reason AS "reason",
+		a.apply_time AS "applyTime",
+		a.begin_time AS "beginTime",
+		a.end_time AS "endTime",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.audit1_text AS "audit1Text",
+		a.audit2_text AS "audit2Text",
+		a.audit3_text AS "audit3Text",
+		a.audit4_text AS "audit4Text",
+		a.audit5_text AS "audit5Text",
+		a.audit6_text AS "audit6Text",
+		a.type AS "type",
+		a.overtime_time AS "overtimeTime",
+		a.leave_time AS "leaveTime",
+		a.total_leave_time AS "totalLeaveTime",
+		a.backup1 AS "backup1",
+		a.backup2 AS "backup2",
+		a.backup3 AS "backup3",
+		a.remarks AS "remarks",
+		a.del_flag AS "delFlag",
+		u3.name AS "user.name",
+		o4.name AS "office.name"
+	</sql>
+	
+	<sql id="oaLeaveJoins">
+		LEFT JOIN sys_user u3 ON u3.id = a.user_id
+		LEFT JOIN sys_office o4 ON o4.id = a.office_id
+	</sql>
+    
+	<select id="get" resultType="OaLeave">
+		SELECT 
+			<include refid="oaLeaveColumns"/>
+		FROM oa_leave a
+		<include refid="oaLeaveJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="OaLeave">
+		SELECT 
+			<include refid="oaLeaveColumns"/>
+		FROM oa_leave a
+		<include refid="oaLeaveJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>
+		
+		<if test="user != null and user.id != null and user.id != ''">
+			AND u3.id LIKE 
+					<if test="dbName == 'oracle'">'%'||#{user.id}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{user.id}+'%'</if>
+					<if test="dbName == 'mysql'">CONCAT('%', #{user.id}, '%')</if>
+		</if>
+		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="OaLeave">
+		SELECT 
+			<include refid="oaLeaveColumns"/>
+		FROM oa_leave a
+		<include refid="oaLeaveJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO oa_leave(
+			id,
+			proc_ins_id,
+			user_id,
+			office_id,
+			post,
+			reason,
+			apply_time,
+			begin_time,
+			end_time,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			audit1_text,
+			audit2_text,
+			audit3_text,
+			audit4_text,
+			audit5_text,
+			audit6_text,
+			type,
+			overtime_time,
+			leave_time,
+			total_leave_time,
+			backup1,
+			backup2,
+			backup3,
+			remarks,
+			del_flag
+		) VALUES (
+			#{id},
+			#{procInsId},
+			#{user.id},
+			#{office.id},
+			#{post},
+			#{reason},
+			#{applyTime},
+			#{beginTime},
+			#{endTime},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{audit1Text},
+			#{audit2Text},
+			#{audit3Text},
+			#{audit4Text},
+			#{audit5Text},
+			#{audit6Text},
+			#{type},
+			#{overtimeTime},
+			#{leaveTime},
+			#{totalLeaveTime},
+			#{backup1},
+			#{backup2},
+			#{backup3},
+			#{remarks},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE oa_leave SET 	
+			proc_ins_id = #{procInsId},
+			user_id = #{user.id},
+			office_id = #{office.id},
+			post = #{post},
+			reason = #{reason},
+			apply_time = #{applyTime},
+			begin_time = #{beginTime},
+			end_time = #{endTime},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate},
+			audit1_text = #{audit1Text},
+			audit2_text = #{audit2Text},
+			audit3_text = #{audit3Text},
+			audit4_text = #{audit4Text},
+			audit5_text = #{audit5Text},
+			audit6_text = #{audit6Text},
+			type = #{type},
+			overtime_time = #{overtimeTime},
+			leave_time = #{leaveTime},
+			total_leave_time = #{totalLeaveTime},
+			backup1 = #{backup1},
+			backup2 = #{backup2},
+			backup3 = #{backup3},
+			remarks = #{remarks}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE oa_leave SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="updateAudit1Text">
+		UPDATE oa_leave SET
+			audit1_text = #{audit1Text},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="updateAudit2Text">
+		UPDATE oa_leave SET
+			audit2_text = #{audit2Text},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<select id="getTotalLeaveTime" resultType="String">
+		SELECT sum(a.leave_time)
+		FROM oa_leave a
+		<include refid="oaLeaveJoins"/>
+		<where>
+			a.user_id = #{user.id} 
+		</where>
+	</select>
+
+</mapper>

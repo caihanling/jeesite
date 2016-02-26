@@ -27,7 +27,7 @@
 	<ul class="nav nav-tabs">
 		<li class="active"><a href="${ctx}/act/task/todo/">待办任务</a></li>
 		<li><a href="${ctx}/act/task/historic/">已办任务</a></li>
-		<li><a href="${ctx}/act/task/process/">新建任务</a></li>
+<%-- 		<li><a href="${ctx}/act/task/process/">新建任务</a></li> --%>
 	</ul>
 	<form:form id="searchForm" modelAttribute="act" action="${ctx}/act/task/todo/" method="get" class="breadcrumb form-search">
 		<div>
@@ -55,7 +55,7 @@
 				<th>当前环节</th><%--
 				<th>任务内容</th> --%>
 				<th>流程名称</th>
-				<th>流程版本</th>
+<!-- 				<th>流程版本</th> -->
 				<th>创建时间</th>
 				<th>操作</th>
 			</tr>
@@ -70,34 +70,37 @@
 				<tr>
 					<td>
 						<c:if test="${empty task.assignee}">
-							<a href="javascript:claim('${task.id}');" title="签收任务">${fns:abbr(not empty act.vars.map.title ? act.vars.map.title : task.id, 60)}</a>
+<%-- 							<a href="javascript:claim('${task.id}');" title="签收任务">${fns:abbr(not empty act.vars.map.title ? act.vars.map.title : task.id, 60)}</a> --%>
+								${fns:abbr(not empty act.vars.map.title ? act.vars.map.title : task.id, 60)}
 						</c:if>
 						<c:if test="${not empty task.assignee}">
-							<a href="${ctx}/act/task/form?taskId=${task.id}&taskName=${fns:urlEncode(task.name)}&taskDefKey=${task.taskDefinitionKey}&procInsId=${task.processInstanceId}&procDefId=${task.processDefinitionId}&status=${status}">${fns:abbr(not empty vars.map.title ? vars.map.title : task.id, 60)}</a>
+<%-- 							<a href="${ctx}/act/task/form?taskId=${task.id}&taskName=${fns:urlEncode(task.name)}&taskDefKey=${task.taskDefinitionKey}&procInsId=${task.processInstanceId}&procDefId=${task.processDefinitionId}&status=${status}">${fns:abbr(not empty vars.map.title ? vars.map.title : task.id, 60)}</a> --%>
+							${fns:abbr(not empty vars.map.title ? vars.map.title : task.id, 60)}
 						</c:if>
 					</td>
 					<td>
-						<a target="_blank" href="${pageContext.request.contextPath}/act/rest/diagram-viewer?processDefinitionId=${task.processDefinitionId}&processInstanceId=${task.processInstanceId}">${task.name}</a>
+<%-- 						<a target="_blank" href="${pageContext.request.contextPath}/act/rest/diagram-viewer?processDefinitionId=${task.processDefinitionId}&processInstanceId=${task.processInstanceId}">${task.name}</a> --%>
+						${task.name}
 					</td><%--
 					<td>${task.description}</td> --%>
 					<td>${procDef.name}</td>
-					<td><b title='流程版本号'>V: ${procDef.version}</b></td>
-					<td><fmt:formatDate value="${task.createTime}" type="both"/></td>
+<%-- 					<td><b title='流程版本号'>V: ${procDef.version}</b></td> --%>
+					<td><fmt:formatDate value="${task.createTime}" type="both" pattern="yyyy-MM-dd HH:mm:ss"/></td>
 					<td>
 						<c:if test="${empty task.assignee}">
 							<a href="javascript:claim('${task.id}');">签收任务</a>
 						</c:if>
 						<c:if test="${not empty task.assignee}"><%--
 							<a href="${ctx}${procExecUrl}/exec/${task.taskDefinitionKey}?procInsId=${task.processInstanceId}&act.taskId=${task.id}">办理</a> --%>
-							<a href="${ctx}/act/task/form?taskId=${task.id}&taskName=${fns:urlEncode(task.name)}&taskDefKey=${task.taskDefinitionKey}&procInsId=${task.processInstanceId}&procDefId=${task.processDefinitionId}&status=${status}">任务办理</a>
+							<a href="${ctx}/act/task/form?taskId=${task.id}&taskName=${fns:urlEncode(task.name)}&taskDefKey=${task.taskDefinitionKey}&procInsId=${task.processInstanceId}&procDefId=${task.processDefinitionId}&status=${status}">办理</a>
 						</c:if>
 						<shiro:hasPermission name="act:process:edit">
 							<c:if test="${empty task.executionId}">
 								<a href="${ctx}/act/task/deleteTask?taskId=${task.id}&reason=" onclick="return promptx('删除任务','删除原因',this.href);">删除任务</a>
 							</c:if>
 						</shiro:hasPermission>
-						<a target="_blank" href="${pageContext.request.contextPath}/act/rest/diagram-viewer?processDefinitionId=${task.processDefinitionId}&processInstanceId=${task.processInstanceId}">跟踪1</a>
-						<a target="_blank" href="${ctx}/act/task/trace/photo/${task.processDefinitionId}/${task.executionId}">跟踪2</a><%--  
+<%-- 						<a target="_blank" href="${pageContext.request.contextPath}/act/rest/diagram-viewer?processDefinitionId=${task.processDefinitionId}&processInstanceId=${task.processInstanceId}">跟踪1</a> --%>
+						<a target="_blank" href="${ctx}/act/task/trace/photo/${task.processDefinitionId}/${task.executionId}">详情</a><%--  
 						<a target="_blank" href="${ctx}/act/task/trace/info/${task.processInstanceId}">跟踪信息</a> --%>
 					</td>
 				</tr>

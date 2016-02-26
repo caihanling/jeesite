@@ -403,6 +403,20 @@ public class ActTaskService extends BaseService {
 			vars.put("title", title);
 		}
 		
+		User currentUser = UserUtils.getUser();
+		User teamleader = UserUtils.get(currentUser.getLeaderId());
+
+//		//对于组长，跳过组长审批
+//		if ("leader".equals(currentUser.getRole().getEnname())) {
+//			vars.put("pass", "1");
+//		}
+		
+		//存储teamleaderId
+		vars.put("teamleader",teamleader.getLoginName());
+		//存储managerID
+		vars.put("manager", UserUtils.get(teamleader.getLeaderId()).getLoginName());
+		
+		
 		// 启动流程
 		ProcessInstance procIns = runtimeService.startProcessInstanceByKey(procDefKey, businessTable+":"+businessId, vars);
 		

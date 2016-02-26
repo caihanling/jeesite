@@ -33,6 +33,7 @@ import com.thinkgem.jeesite.modules.sys.entity.Menu;
 import com.thinkgem.jeesite.modules.sys.entity.Office;
 import com.thinkgem.jeesite.modules.sys.entity.Role;
 import com.thinkgem.jeesite.modules.sys.entity.User;
+import com.thinkgem.jeesite.modules.sys.entity.UserMonthDetail;
 import com.thinkgem.jeesite.modules.sys.security.SystemAuthorizingRealm;
 import com.thinkgem.jeesite.modules.sys.utils.LogUtils;
 import com.thinkgem.jeesite.modules.sys.utils.UserUtils;
@@ -394,6 +395,10 @@ public class SystemService extends BaseService implements InitializingBean {
 		CacheUtils.remove(LogUtils.CACHE_MENU_NAME_PATH_MAP);
 	}
 	
+//	
+//	@Transactional(readOnly = false)
+//	public List<>
+	
 	/**
 	 * 获取Key加载信息
 	 */
@@ -539,5 +544,7 @@ public class SystemService extends BaseService implements InitializingBean {
 	}
 	
 	///////////////// Synchronized to the Activiti end //////////////////
+	
+
 	
 }

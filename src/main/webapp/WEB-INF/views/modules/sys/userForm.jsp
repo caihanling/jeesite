@@ -99,6 +99,13 @@
 			</div>
 		</div>
 		<div class="control-group">
+			<label class="control-label">直系领导:</label>
+			<div class="controls">
+                <sys:treeselect id="leaderId" name="leaderId" value="${user.id}" labelName="user.name" labelValue="${user.name}"
+					title="用户" url="/sys/office/treeData?type=3" cssClass="required" notAllowSelectParent="true"/>
+			</div>
+		</div>
+		<div class="control-group">
 			<label class="control-label">邮箱:</label>
 			<div class="controls">
 				<form:input path="email" htmlEscape="false" maxlength="100" class="email"/>

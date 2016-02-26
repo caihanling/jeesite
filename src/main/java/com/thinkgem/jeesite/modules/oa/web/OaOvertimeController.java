@@ -19,13 +19,15 @@ import com.thinkgem.jeesite.common.config.Global;
 import com.thinkgem.jeesite.common.persistence.Page;
 import com.thinkgem.jeesite.common.web.BaseController;
 import com.thinkgem.jeesite.common.utils.StringUtils;
+import com.thinkgem.jeesite.modules.oa.entity.Detail;
 import com.thinkgem.jeesite.modules.oa.entity.OaOvertime;
 import com.thinkgem.jeesite.modules.oa.service.OaOvertimeService;
+import com.thinkgem.jeesite.modules.sys.utils.UserUtils;
 
 /**
  * 加班申请Controller
  * @author chl
- * @version 2016-01-08
+ * @version 2016-01-16
  */
 @Controller
 @RequestMapping(value = "${adminPath}/oa/oaOvertime")
@@ -49,9 +51,24 @@ public class OaOvertimeController extends BaseController {
 	@RequiresPermissions("oa:oaOvertime:view")
 	@RequestMapping(value = {"list", ""})
 	public String list(OaOvertime oaOvertime, HttpServletRequest request, HttpServletResponse response, Model model) {
+		
 		Page<OaOvertime> page = oaOvertimeService.findPage(new Page<OaOvertime>(request, response), oaOvertime); 
 		model.addAttribute("page", page);
 		return "modules/oa/oaOvertimeList";
+	}
+	
+	@RequiresPermissions("oa:oaOvertime:view")
+	@RequestMapping(value = "detail")
+	public String detail (OaOvertime oaOvertime, HttpServletRequest request, HttpServletResponse response, Model model) {
+	
+		Page<OaOvertime> page = oaOvertimeService.findPageByHr(new Page<OaOvertime>(request, response), oaOvertime); 
+		
+		if (oaOvertime.getUser() != null) {
+			Detail detail = oaOvertimeService.getTotalDetail(oaOvertime);
+			model.addAttribute("detail", detail);
+		}
+		model.addAttribute("page", page);
+		return "modules/oa/oaOvertimeDetail";
 	}
 
 	@RequiresPermissions("oa:oaOvertime:view")
@@ -60,47 +77,44 @@ public class OaOvertimeController extends BaseController {
 		
 		String view = "oaOvertimeForm";
 		
-		//查看审批申请表
-		if (StringUtils.isNoneBlank(oaOvertime.getId())) {
+//		添加申请时姓名和部门是默认值
+		oaOvertime.setUser(UserUtils.getUser());
+		oaOvertime.setOffice(UserUtils.getUser().getOffice());
 		
+		//查看审批清单
+		if (StringUtils.isNoneBlank(oaOvertime.getId())) {
+			
 			//环节编号
 			String taskDefKey = oaOvertime.getAct().getTaskDefKey();
-			System.err.println(taskDefKey);
 			
 			//查看工单
 			if (oaOvertime.getAct().isFinishTask()) {
 				view = "oaOvertimeView";
 			}
-			
 			//审核环节1
-			else if ("leaderAudit".equals(taskDefKey)) {
+			else if ("audit1".equals(taskDefKey)) {
 				view = "oaOvertimeAudit";
 			}
-			
 			//审核环节2
-			else if ("confirme".equals(taskDefKey)) {
+			else if ("audit2".equals(taskDefKey)) {
 				view = "oaOvertimeAudit";
 			}
-			
+			//审核环节3,修改确认加班时间
+			else if ("audit3".equals(taskDefKey)) {
+				view = "oaOvertimeForm";
+			}
 			//兑现环节
 			else if ("apply_end".equals(taskDefKey)) {
 				view = "oaOvertimeAudit";
 			}
 		}
 		
+		
 		model.addAttribute("oaOvertime", oaOvertime);
+		
 		return "modules/oa/" + view;
 	}
 
-	
-	/**
-	 * 申请单保存/修改
-	 * @param oaOvertime
-	 * @param model
-	 * @param redirectAttributes
-	 * @return
-	 */
-	
 	@RequiresPermissions("oa:oaOvertime:edit")
 	@RequestMapping(value = "save")
 	public String save(OaOvertime oaOvertime, Model model, RedirectAttributes redirectAttributes) {
@@ -108,9 +122,30 @@ public class OaOvertimeController extends BaseController {
 			return form(oaOvertime, model);
 		}
 		oaOvertimeService.save(oaOvertime);
-		addMessage(redirectAttributes, "提交审批'" + oaOvertime.getCurrentUser().getName() + "'成功");
+		addMessage(redirectAttributes, "保存加班申请成功");
 		return "redirect:" + adminPath + "/act/task/todo/";
 	}
+
+	
+	/***
+	 * 工单执行
+	 * @param oaOvertime
+	 * @param model
+	 * @return
+	 */
+	
+	@RequiresPermissions("oa:oaOvertime:edit")
+	@RequestMapping(value="saveAudit")
+	public String saveAudit(OaOvertime oaOvertime , Model model){
+		
+		if (StringUtils.isBlank(oaOvertime.getAct().getFlag()) || StringUtils.isBlank(oaOvertime.getAct().getComment())) {
+			addMessage(model, "请填写审核意见。");
+			return form(oaOvertime, model);
+		}
+		oaOvertimeService.saveAudit(oaOvertime);
+		return "redirect:" + adminPath + "/act/task/todo/";
+	}
+	
 	
 	@RequiresPermissions("oa:oaOvertime:edit")
 	@RequestMapping(value = "delete")
@@ -118,20 +153,6 @@ public class OaOvertimeController extends BaseController {
 		oaOvertimeService.delete(oaOvertime);
 		addMessage(redirectAttributes, "删除加班申请成功");
 		return "redirect:"+Global.getAdminPath()+"/oa/oaOvertime/?repage";
-	}
-	
-	/**
-	 * 工单执行
-	 */
-	@RequiresPermissions("oa:oaOvertime:edit")
-	@RequestMapping(value="saveAudit")
-	public String saveAudit(OaOvertime oaOvertime , Model model) {
-		if (StringUtils.isBlank(oaOvertime.getAct().getFlag()) || StringUtils.isBlank(oaOvertime.getAct().getComment()) ) {
-			addMessage(model, "请填写审核意见。");
-			return form(oaOvertime , model);
-		}
-		oaOvertimeService.saveAudit(oaOvertime);
-		return "redirect:" + adminPath + "/act/task/todo/";
 	}
 
 }

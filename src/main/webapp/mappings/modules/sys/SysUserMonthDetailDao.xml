@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.sys.dao.SysUserMonthDetailDao">
+
+	<sql id="sysUserMonthDetailColumns">
+		a.id AS "id",
+		a.user_id AS "user.id",
+		a.office_id AS
+		"office.id",
+		a.count_overtime AS "countOvertime",
+		a.count_leave AS
+		"countLeave",
+		a.count_punch AS "countPunch",
+		a.count_expense AS
+		"countExpense",
+		a.create_by AS "createBy.id",
+		a.create_date AS
+		"createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS
+		"updateDate",
+		a.backup1 AS "backup1",
+		a.backup2 AS "backup2",
+		a.remarks
+		AS "remarks",
+		a.del_flag AS "delFlag",
+		u2.name AS "user.name",
+		o3.name AS
+		"office.name"
+	</sql>
+
+	<sql id="sysUserMonthDetailJoins">
+		LEFT JOIN sys_user u2 ON u2.id = a.user_id
+		LEFT JOIN
+		sys_office o3 ON o3.id = a.office_id
+	</sql>
+
+	<select id="get" resultType="SysUserMonthDetail">
+		SELECT
+		<include refid="sysUserMonthDetailColumns" />
+		FROM sys_user_month_detail a
+		<include refid="sysUserMonthDetailJoins" />
+		WHERE a.id = #{id}
+	</select>
+
+	<select id="findList" resultType="SysUserMonthDetail">
+		SELECT
+		<include refid="sysUserMonthDetailColumns" />
+		FROM sys_user_month_detail a
+		<include refid="sysUserMonthDetailJoins" />
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+
+	<select id="findAllList" resultType="SysUserMonthDetail">
+		SELECT
+		<include refid="sysUserMonthDetailColumns" />
+		FROM sys_user_month_detail a
+		<include refid="sysUserMonthDetailJoins" />
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+
+	<insert id="insert">
+		INSERT INTO sys_user_month_detail(
+		id,
+		user_id,
+		office_id,
+		count_overtime,
+		count_leave,
+		count_punch,
+		count_expense,
+		create_by,
+		create_date,
+		update_by,
+		update_date,
+		backup1,
+		backup2,
+		remarks,
+		del_flag
+		) VALUES (
+		#{id},
+		#{user.id},
+		#{office.id},
+		#{countOvertime},
+		#{countLeave},
+		#{countPunch},
+		#{countExpense},
+		#{createBy.id},
+		#{createDate},
+		#{updateBy.id},
+		#{updateDate},
+		#{backup1},
+		#{backup2},
+		#{remarks},
+		#{delFlag}
+		)
+	</insert>
+
+	<update id="update">
+		UPDATE sys_user_month_detail SET
+		user_id = #{user.id},
+		office_id = #{office.id},
+		count_overtime = #{countOvertime},
+		count_leave = #{countLeave},
+		count_punch = #{countPunch},
+		count_expense
+		= #{countExpense},
+		update_by = #{updateBy.id},
+		update_date =
+		#{updateDate},
+		backup1 = #{backup1},
+		backup2 = #{backup2},
+		remarks =
+		#{remarks}
+		WHERE id = #{id}
+	</update>
+
+	<update id="delete">
+		UPDATE sys_user_month_detail SET
+		del_flag =
+		#{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+
+	<select id="getCountOvertime" resultType="String">
+		SELECT sum(backup1) from oa_overtime 
+		WHERE date_format(`create_date`,'%Y-%m')=date_format(now(),'%Y-%m') 
+		and user_id = #{id}
+	</select>
+	
+	<select id="getCountLeave" resultType="String">
+		SELECT sum(leave_time) from oa_leave
+		WHERE date_format(`end_time`,'%Y-%m')=date_format(now(),'%Y-%m') 
+		and user_id = #{id}
+	</select>
+	
+	<select id="getCountPunch" resultType="String">
+		SELECT count(*) from oa_punch
+		WHERE date_format(`punch_time`,'%Y-%m')=date_format(now(),'%Y-%m') 
+		and user_id = #{id}
+	</select>
+	
+	<select id="getCountExpense" resultType="String">
+		SELECT sum(account) from oa_expense
+		WHERE date_format(`apply_time`,'%Y-%m')=date_format(now(),'%Y-%m') 
+		and user_id = #{id}
+	</select>
+
+</mapper>

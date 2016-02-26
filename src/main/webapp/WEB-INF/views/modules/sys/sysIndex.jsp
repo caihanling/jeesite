@@ -3,7 +3,7 @@
 <html>
 <head>
 	<title>${fns:getConfig('productName')}</title>
-	<meta name="decorator" content="blank"/><c:set var="tabmode" value="${empty cookie.tabmode.value ? '1' : cookie.tabmode.value}"/>
+	<meta name="decorator" content="blank"/><c:set var="tabmode" value="${empty cookie.tabmode.value ? '0' : cookie.tabmode.value}"/><!-- 关闭页签模式，默认为无页签模式 -->
     <c:if test="${tabmode eq '1'}"><link rel="Stylesheet" href="${ctxStatic}/jerichotab/css/jquery.jerichotab.css" />
     <script type="text/javascript" src="${ctxStatic}/jerichotab/js/jquery.jerichotab.js"></script></c:if>
 	<style type="text/css">
@@ -114,17 +114,45 @@
 					$(this).click();
 				}
 			});
+			
 			// 获取通知数目  <c:set var="oaNotifyRemindInterval" value="${fns:getConfig('oa.notify.remind.interval')}"/>
+			
+			//获取通知数量和待办任务数量
 			function getNotifyNum(){
+				var num1,num2,num;
+				//获取通知数量
 				$.get("${ctx}/oa/oaNotify/self/count?updateSession=0&t="+new Date().getTime(),function(data){
-					var num = parseFloat(data);
-					if (num > 0){
-						$("#notifyNum,#notifyNum2").show().html("("+num+")");
-					}else{
-						$("#notifyNum,#notifyNum2").hide()
-					}
+					num1 = parseFloat(data);
+
+					//获取待办任务数量
+					$.get("${ctx}/act/task/todo/count?updateSession=0&t="+new Date().getTime(),function(data){
+						num2 = parseFloat(data);
+	
+						num = num1 + num2;
+						if (num > 0) {
+							if (num1 == 0) {
+								$("#notifyNum,#notifyNum2").hide();
+							}else {
+								$("#notifyNum,#notifyNum2").show().html("("+num1+")");
+							}
+							
+							if (num2 == 0) {
+								$("#actNum,#actNum2").hide();
+							}else {
+								$("#actNum,#actNum2").show().html("("+num2+")");
+							}
+							
+							$("#totalNum,#totalNum2").show().html("("+num+")");
+						}else{
+							$("#notifyNum,#notifyNum2").hide();
+							$("#actNum,#actNum2").hide();
+							$("#totalNum,#totalNum2").hide();
+						}
+					});
 				});
+				
 			}
+			
 			getNotifyNum(); //<c:if test="${oaNotifyRemindInterval ne '' && oaNotifyRemindInterval ne '0'}">
 			setInterval(getNotifyNum, ${oaNotifyRemindInterval}); //</c:if>
 		});
@@ -161,11 +189,12 @@
 						<!--[if lte IE 6]><script type="text/javascript">$('#themeSwitch').hide();</script><![endif]-->
 					</li>
 					<li id="userInfo" class="dropdown">
-						<a class="dropdown-toggle" data-toggle="dropdown" href="#" title="个人信息">您好, ${fns:getUser().name}&nbsp;<span id="notifyNum" class="label label-info hide"></span></a>
+						<a class="dropdown-toggle" data-toggle="dropdown" href="#" title="个人信息">您好, ${fns:getUser().name}&nbsp;<span id="totalNum2" class="label label-info hide"></span></a>
 						<ul class="dropdown-menu">
 							<li><a href="${ctx}/sys/user/info" target="mainFrame"><i class="icon-user"></i>&nbsp; 个人信息</a></li>
 							<li><a href="${ctx}/sys/user/modifyPwd" target="mainFrame"><i class="icon-lock"></i>&nbsp;  修改密码</a></li>
 							<li><a href="${ctx}/oa/oaNotify/self" target="mainFrame"><i class="icon-bell"></i>&nbsp;  我的通知 <span id="notifyNum2" class="label label-info hide"></span></a></li>
+							<li><a href="${ctx}/act/task/todo" target="mainFrame"><i class="icon-bell"></i>&nbsp;  待办任务<span id="actNum2" class="label label-info hide"></span></a></li>
 						</ul>
 					</li>
 					<li><a href="${ctx}/logout" title="退出登录">退出</a></li>
@@ -222,7 +251,7 @@
 				</div>
 			</div>
 		    <div id="footer" class="row-fluid">
-	            Copyright &copy; 2012-${fns:getConfig('copyrightYear')} ${fns:getConfig('productName')} - Powered By <a href="http://jeesite.com" target="_blank">JeeSite</a> ${fns:getConfig('version')}
+	            Copyright &copy; 2014-${fns:getConfig('copyrightYear')} ${fns:getConfig('productName')} - Powered By 技术中心 ${fns:getConfig('version')}
 			</div>
 		</div>
 	</div>

@@ -109,6 +109,7 @@ public class OaNotifyController extends BaseController {
 	@RequestMapping(value = "selfData")
 	@ResponseBody
 	public Page<OaNotify> listData(OaNotify oaNotify, HttpServletRequest request, HttpServletResponse response, Model model) {
+		//只查询自己的通知
 		oaNotify.setSelf(true);
 		Page<OaNotify> page = oaNotifyService.find(new Page<OaNotify>(request, response), oaNotify);
 		return page;

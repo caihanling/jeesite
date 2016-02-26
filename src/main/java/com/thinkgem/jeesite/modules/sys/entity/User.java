@@ -31,6 +31,8 @@ public class User extends DataEntity<User> {
 	private static final long serialVersionUID = 1L;
 	private Office company;	// 归属公司
 	private Office office;	// 归属部门
+	private String leaderId; 	//直系上级id
+
 	private String loginName;// 登录名
 	private String password;// 密码
 	private String no;		// 工号
@@ -71,6 +73,14 @@ public class User extends DataEntity<User> {
 	public User(Role role){
 		super();
 		this.role = role;
+	}
+	
+	public String getLeaderId() {
+		return leaderId;
+	}
+	
+	public void setLeaderId(String leaderId) {
+		this.leaderId = leaderId;
 	}
 	
 	public String getPhoto() {

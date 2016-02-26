@@ -79,7 +79,6 @@ public class TestAuditController extends BaseController {
 
 			// 环节编号
 			String taskDefKey = testAudit.getAct().getTaskDefKey();
-			System.err.println(taskDefKey);
 			
 			// 查看工单
 			if(testAudit.getAct().isFinishTask()){
@@ -114,6 +113,8 @@ public class TestAuditController extends BaseController {
 		}
 
 		model.addAttribute("testAudit", testAudit);
+		System.err.println("testAudit.proc_ins_id:" + testAudit.getAct().getProcInsId());
+		System.err.println("testAudit return :" + view);
 		return "modules/oa/" + view;
 	}
 	
